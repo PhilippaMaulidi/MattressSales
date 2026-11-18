@@ -1,0 +1,402 @@
+question 1 
+ /*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ */
+
+package com.mycompany.mattresssales;
+
+import java.util.Scanner;
+
+/**
+ *
+ * @author mauli
+ */
+public class MattressSales {
+
+    public static void main(String[] args) {
+       Scanner sc = new Scanner(System.in);
+
+       //top 3 performing products//
+        String[] products = {
+            "COZY Nights Monarch",
+            "Restonic Barbados",
+            "Sealy Phuket"
+        
+        };
+        String[] months = {"month 1", "month 2", "month 3"};
+
+        // product and its sales for 3 months
+        int[][] sales = new int[3][3];
+
+        for (int i = 0; i < products.length; i++) {
+            for (int j = 0; j < months.length; j++) {
+                System.out.print("Enter number of sales for " + months[j]
+                    + " for " + products[i] + " mattress: ");
+                sales[i][j] = sc.nextInt();
+            }
+            System.out.println();
+        }
+
+        Product product = new Product(sales, products);
+        PrintProducts printer = new PrintProducts();
+
+        System.out.println("\nPRODUCT SALES REPORT - 2026");
+        System.out.println("\n******************************************");
+        printer.PrintTotal(product.GetTotalProductsSold());
+        printer.PrintAverage(product.GetAverageProductSold());
+        printer.PrintMostPopular(product.GetMostPopularProduct());
+
+        sc.close();
+    }
+}
+  
+
+*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.mycompany.mattresssales;
+
+/**
+ *
+ * @author mauli
+ */
+
+public class Product implements IProduct {
+    private int[][] sales; 
+    private String[] products;
+
+    public Product(int[][] sales, String[] products) {
+        this.sales = sales;
+        this.products = products;
+    }
+
+    
+    public Product() {
+        this.products = new String[]{
+            "Cozy Nights Monarch",
+            "Restonic Barbados",
+            "Sealy Phuket"
+        };
+        this.sales = new int[][]{
+            {25, 18, 20},
+            {15, 10, 12},
+            {18, 15, 20}
+        };
+    }
+
+    @Override
+    public int GetTotalProductsSold() {
+        int total = 0;
+        for (int[] row : sales) {
+            for (int s : row) total += s;
+        }
+        return total; 
+    }
+
+    @Override
+    public double GetAverageProductSold() {
+        return (double) GetTotalProductsSold() / (sales.length * sales[0].length); 
+    }
+
+    @Override
+    public String GetMostPopularProduct() {
+        int max = sales[0][0];
+        int maxProduct = 0;
+        for (int i = 0; i < sales.length; i++) {
+            for (int j = 0; j < sales[i].length; j++) {
+                if (sales[i][j] > max) {
+                    max = sales[i][j];
+                    maxProduct = i;
+                }
+            }
+        }
+        
+        return products[maxProduct] + "(" + max + ")";
+    }
+
+}
+
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.mycompany.mattresssales;
+
+/**
+ *
+ * @author mauli
+ */
+
+public interface IProduct {
+    int GetTotalProductsSold();
+    double GetAverageProductSold();
+    String GetMostPopularProduct();
+}
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.mycompany.mattresssales;
+
+/**
+ *
+ * @author mauli
+ */
+public class PrintProducts {
+    public void PrintTotal(int total) {
+        System.out.println("TOTAL PRODUCT SALES: " + total);
+    }
+    public void PrintAverage(double average) {
+        System.out.println("AVERAGE PRODUCT SALES: " + Math.round(average));
+    }
+    public void PrintMostPopular(String mostPopular) {
+        System.out.println("MOST POPULAR PRODUCT: " + mostPopular);
+    }
+}
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/UnitTests/JUnit5TestClass.java to edit this template
+ */
+package com.mycompany.mattresssales;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+
+
+
+/**
+ *
+ * @author mauli
+ */
+public class PrintProductsTest {
+    Product p = new Product(); // uses default 153 data
+
+    @Test
+    public void GetTotalProductSales_WithValidData_ReturnsCorrectValue() {
+        assertEquals(153, p.GetTotalProductsSold());
+    }
+
+    @Test
+    public void GetAverageSales_WithValidData_ReturnsCorrectValue() {
+        assertEquals(17.0, p.GetAverageProductSold(), 0.01);
+    }
+}
+
+
+
+
+
+
+
+
+question 2 
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ */
+
+package com.mycompany.mattresssalesgui;
+
+import javax.swing.*;
+import java.io.FileWriter;
+import java.io.IOException;
+
+/**
+ *
+ * @author mauli
+ */
+public class MattressSalesGUI extends JFrame{
+    private JTextField txtCustomer, txtPrice;
+    private JComboBox<String> cmbProduct;
+    private final JButton btnProcess;
+
+    public MattressSalesGUI() {
+        setTitle("Product App");
+        setSize(450, 350);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(null);
+
+        //customer details //
+        JLabel lblCustomer = new JLabel("Customer Name:");
+        lblCustomer.setBounds(40, 40, 120, 30);
+        txtCustomer = new JTextField();
+        txtCustomer.setBounds(170, 40, 220, 30);
+
+        //product name //
+        JLabel lblProduct = new JLabel("Select Product:");
+        lblProduct.setBounds(40, 90, 120, 30);
+        cmbProduct = new JComboBox<>(new String[]{
+            "Cozy Nights Monarch",
+            "Restonic Barbados",
+            "Sealy Phuket"
+        });
+        cmbProduct.setBounds(170, 90, 220, 30);
+     
+        // product price//
+        JLabel lblPrice = new JLabel("Enter Price:");
+        lblPrice.setBounds(40, 140, 120, 30);
+        txtPrice = new JTextField();
+        txtPrice.setBounds(170, 140, 220, 30);
+
+        btnProcess = new JButton("PROCESS");
+        btnProcess.setBounds(170, 200, 220, 35);
+
+        add(lblCustomer); add(txtCustomer);
+        add(lblProduct); add(cmbProduct);
+        add(lblPrice); add(txtPrice);
+        add(btnProcess);
+
+        // menu bar q2.4 //
+        JMenuBar menuBar = new JMenuBar();
+        JMenu fileMenu = new JMenu("File");
+        JMenuItem exitItem = new JMenuItem("Exit");
+        fileMenu.add(exitItem);
+
+        JMenu toolsMenu = new JMenu("Tools");
+        JMenuItem processItem = new JMenuItem("Process");
+        JMenuItem clearItem = new JMenuItem("Clear");
+        toolsMenu.add(processItem);
+        toolsMenu.add(clearItem);
+
+        menuBar.add(fileMenu);
+        menuBar.add(toolsMenu);
+        setJMenuBar(menuBar);
+
+        btnProcess.addActionListener(e -> processSale());
+        processItem.addActionListener(e -> processSale());
+
+        exitItem.addActionListener(e -> System.exit(0));
+
+        clearItem.addActionListener(e -> {
+            txtCustomer.setText("");
+            txtPrice.setText("");
+            cmbProduct.setSelectedIndex(0);
+        });
+    }
+
+    private void processSale() {
+        try {
+            String customer = txtCustomer.getText();
+            String product = (String) cmbProduct.getSelectedItem();
+            double price = Double.parseDouble(txtPrice.getText());
+
+            ProductCalculations calc = new ProductCalculations(price);
+            double vat = calc.GetVat();
+            double commission = calc.GetCommission();
+            double total = calc.GetTotal();
+
+            
+            JOptionPane.showMessageDialog(this,
+                "Customer Name: " + customer +
+                "\nProduct: " + product +
+                "\nVAT: R " + vat +
+                "\nCOMMISSION: R " + commission +
+                "\nTOTAL: R " + total);
+
+            // Data.txt file q2.3//
+            try (FileWriter writer = new FileWriter("data.txt")) {
+                writer.write("DATA LOG\n");
+                writer.write("************************************\n");
+                writer.write("Customer Name: " + customer + "\n");
+                writer.write("Product: " + product + "\n");
+                writer.write("VAT: R " + vat + "\n");
+                writer.write("COMMISSION: R " + commission + "\n");
+                writer.write("TOTAL: R " + total + "\n");
+                writer.write("************************************");
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Error saving file");
+            }
+
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Please enter a valid price");
+        }
+    }
+
+    public static void main(String[] args) {
+        new MattressSalesGUI().setVisible(true);
+    }
+}
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.mycompany.mattresssalesgui;
+
+/**
+ *
+ * @author mauli
+ */
+
+public class ProductCalculations implements IProductCalculations {
+    private final double price;
+
+    public ProductCalculations(double price) {
+        this.price = price;
+    }
+
+    //calculating the vat of 15%//
+    @Override
+    public double GetVat() {
+        return price * 0.15;
+    }
+
+    // calculating commission at 5%//
+    @Override
+    public double GetCommission() {
+        return price * 0.05;
+    }
+
+    // calculating the total sale amount//
+    @Override
+    public double GetTotal() {
+        return price + GetVat() + GetCommission();
+    }
+}
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.mycompany.mattresssalesgui;
+
+/**
+ *
+ * @author mauli
+ */
+
+public interface IProductCalculations {
+    double GetVat();
+    double GetCommission();
+    double GetTotal();
+}
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/UnitTests/JUnit5TestClass.java to edit this template
+ */
+package com.mycompany.mattresssalesgui;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+
+/**
+ *
+ * @author mauli
+ */
+public class ProductCalculationsTest {
+    ProductCalculations calc = new ProductCalculations(3500);
+
+    @Test
+    public void GetVat_WithValidData_ReturnsCorrectValue() {
+        assertEquals(525.0, calc.GetVat(), 0.01);
+    }
+
+    @Test
+    public void GetTotal_WithValidData_ReturnsCorrectValue() {
+        assertEquals(4200.0, calc.GetTotal(), 0.01);
+    }
+}
